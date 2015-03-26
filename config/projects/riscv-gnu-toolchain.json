@@ -1,0 +1,53 @@
+{
+    "name": "riscv-gnu-toolchain",
+    "url": "git://github.com/riscv/riscv-gnu-toolchain.git",
+
+    "configurations": [
+        {
+            "name": "riscv@xlen@-unknown-linux-gnu @multilib@-multilib @atomic@-atomic @float@-float",
+            "parameters": [
+                {
+                    "pattern": "@xlen@",
+                    "values": ["32", "64"]
+                },
+                {
+                    "pattern": "@multilib@",
+                    "values": ["enable", "disable"]
+                },
+                {
+                    "pattern": "@atomic@",
+                    "values": ["enable", "disable"]
+                },
+                {
+                    "pattern": "@float@",
+                    "values": ["enable", "disable"]
+                }
+            ],
+            "steps": [
+                ["./configure","--prefix=$(PWD)/install", "--enable-linux", "--with-xlen=@xlen@", "--@multilib@-multilib", "--@atomic@-atomic", "--@float@-float"],
+                ["make", "-j4"]
+            ]
+        },
+        {
+            "name": "riscv@xlen@-unknown-elf @atomic@-atomic @float@-float",
+            "parameters": [
+                {
+                    "pattern": "@xlen@",
+                    "values": ["32", "64"]
+                },
+                {
+                    "pattern": "@atomic@",
+                    "values": ["enable", "disable"]
+                },
+                {
+                    "pattern": "@float@",
+                    "values": ["enable", "disable"]
+                }
+            ],
+            "steps": [
+                ["./configure","--prefix=$(PWD)/install", "--disable-linux", "--with-xlen=@xlen@", "--@atomic@-atomic", "--@float@-float"],
+                ["make", "-j4"]
+            ]
+        }
+    ]
+}
