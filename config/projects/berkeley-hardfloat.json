@@ -1,0 +1,14 @@
+{
+    "name": "berkeley-hardfloat",
+    "url": "git://github.com/ucb-bar/berkeley-hardfloat.git",
+
+    "configurations": [
+        {
+            "name": "c-rtl",
+            "parameters": [],
+            "steps": [
+                ["make", "-j1", "all"]
+            ]
+        }
+    ]
+}
