@@ -42,6 +42,8 @@ git reset --hard origin/master
   "config/slaves/*.json" are loaded, everything else is ignored.  Be
   sure not to put your passwords in a publicly availiable git repo!
 
+* Add a report configuration to send email on build failures.
+
 * Ensure the buildmaster and buildslaves are running.
 
 Adding Projects

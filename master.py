@@ -146,8 +146,46 @@ class ProjectList:
             for target in project.targets():
                 yield target
 
+# Contains the list of status reports that should be installed
+class Report:
+    def __init__(self, config):
+        self._faddr    = config["from"]
+        self._username = config["username"]
+        self._password = config["password"]
+        self._relay    = config["relay"]
+
+    def faddr(self):
+        return self._faddr
+
+    def username(self):
+        return self._username
+
+    def password(self):
+        return self._password
+
+    def relay(self):
+        return self._relay
+
+class ReportList:
+    def __init__(self, directory):
+        self._reports = list()
+
+        for filename in os.listdir(directory):
+            if filename.endswith(".json"):
+                print "Loading report config " + filename
+                lines = open(directory + filename).read()
+                report = Report(json.loads(lines))
+                self._reports.append(report)
+
+    def reports(self):
+        return self._reports
+
 slave_list = SlaveList("config/slaves/")
 project_list = ProjectList("config/projects/")
+report_list = ReportList("config/reports/")
+
+for report in report_list.reports():
+    print "report " + report.faddr()
 
 for target in project_list.targets():
     print "target " + target.name()
@@ -167,6 +205,7 @@ from buildbot.changes.filter import ChangeFilter
 from buildbot.steps.source import Git
 from buildbot.steps.shell import ShellCommand
 from buildbot.schedulers.timed import Nightly
+from buildbot.status.mail import MailNotifier
 
 c = BuildmasterConfig = {}
 
@@ -236,5 +275,18 @@ for project in project_list.projects():
             builderNames = project.all_target_names(),
             hour         = 00,
             minute       = 52
+        )
+    )
+
+# Installs email handlers
+for report in report_list.reports():
+    c['status'].append(
+        MailNotifier(
+            fromaddr              = report.faddr(),
+            sendToInterestedUsers = True,
+            relayhost             = report.relay(),
+            smtpPort              = 587,
+            smtpUser              = report.username(),
+            smtpPassword          = report.password(),
         )
     )
