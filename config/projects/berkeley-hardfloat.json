@@ -4,10 +4,15 @@
 
     "configurations": [
         {
-            "name": "c-rtl",
-            "parameters": [],
+            "name": "@backend@-rtl",
+            "parameters": [
+                {
+                    "pattern": "@backend@",
+                    "values": ["c"]
+                }
+            ],
             "steps": [
-                ["make", "-j1", "all"]
+                ["make", "-j1", "autocheck-@backend@"]
             ]
         }
     ]
