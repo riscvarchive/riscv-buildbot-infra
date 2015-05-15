@@ -8,7 +8,7 @@
             "parameters": [
                 {
                     "pattern": "@backend@",
-                    "values": ["c"]
+                    "values": []
                 }
             ],
             "steps": [
