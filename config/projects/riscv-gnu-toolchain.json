@@ -12,7 +12,7 @@
                 },
                 {
                     "pattern": "@multilib@",
-                    "values": ["enable", "disable"]
+                    "values": ["disable"]
                 },
                 {
                     "pattern": "@atomic@",
