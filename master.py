@@ -282,6 +282,7 @@ for project in project_list.projects():
 for report in report_list.reports():
     c['status'].append(
         MailNotifier(
+            mode                  = ('failing',),
             fromaddr              = report.faddr(),
             sendToInterestedUsers = True,
             relayhost             = report.relay(),
