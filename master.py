@@ -60,8 +60,9 @@ class Parameter:
 # configuration list.  You can't directly create a target from the
 # JSON file.
 class Target:
-    def __init__(self, name, steps, params):
+    def __init__(self, name, branch, steps, params):
         self._name = name
+        self._branch = branch
         self._steps = steps
         self._params = params
 
@@ -72,6 +73,9 @@ class Target:
 
     def name(self):
         return self.replaceall(self._name)
+
+    def branch(self):
+        return self._branch
 
     def steps(self):
         return map(lambda step: map(lambda argv: self.replaceall(argv),
@@ -95,6 +99,7 @@ class Project:
         self._targets = list()
         for configuration in config["configurations"]:
             name = configuration["name"]
+            branch = configuration["branch"] if 'branch' in configuration else "master"
             steps = configuration["steps"]
 
             parameters = list()
@@ -106,7 +111,7 @@ class Project:
                 parameters.append(pvpairs)
 
             for params in itertools.product(*parameters):
-                target = Target(name, steps, params)
+                target = Target(name, branch, steps, params)
                 self._targets.append(target)
 
     def name(self):
@@ -242,6 +247,7 @@ for project in project_list.projects():
     for target in project.targets():
         fact = BuildFactory()
         fact.addStep(Git(repourl = project.url(),
+                         branch  = target.branch(),
                          mode    = "clobber"
                      )
                  )
