@@ -188,15 +188,16 @@ class ReportList:
 class ForceList:
     def __init__(self, filename):
         self._forces = list()
-        
+
         print "Loading force config " + filename
         lines = open(filename).read()
         projects = json.loads(lines)
-        for project in projects["projects"]:
-            self._forces.append(project)
+        self._forces = projects["projects"]
 
-    def forces(self):
-        return self._forces
+    def should_force(self, project_name):
+        if self._forces == "*":
+            return True
+        return project_name in self._forces
 
 slave_list = SlaveList("config/slaves/")
 project_list = ProjectList("config/projects/")
@@ -304,7 +305,7 @@ for project in project_list.projects():
             minute       = 52
         )
     )
-    if project.name() in force_list.forces():
+    if force_list.should_force(project.name()):
         c['schedulers'].append(
             ForceScheduler(
                 name = ("force-" + project.name()).encode('ascii','ignore'),
