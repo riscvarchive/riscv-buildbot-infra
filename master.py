@@ -154,10 +154,20 @@ class ProjectList:
 # Contains the list of status reports that should be installed
 class Report:
     def __init__(self, config):
-        self._faddr    = config["from"]
-        self._username = config["username"]
-        self._password = config["password"]
-        self._relay    = config["relay"]
+        self._type     = config["type"]
+        if self.type() == "email":
+            self._faddr    = config["from"]
+            self._username = config["username"]
+            self._password = config["password"]
+            self._relay    = config["relay"]
+        elif self.type() == "http":
+            self._port     = config["port"]
+        else:
+            print "Unknown report type " + self.type()
+            abort
+
+    def type(self):
+        return self._type
 
     def faddr(self):
         return self._faddr
@@ -170,6 +180,9 @@ class Report:
 
     def relay(self):
         return self._relay
+
+    def port(self):
+        return int(self._port)
 
 class ReportList:
     def __init__(self, directory):
@@ -205,7 +218,10 @@ report_list = ReportList("config/reports/")
 force_list = ForceList("config/force.json")
 
 for report in report_list.reports():
-    print "report " + report.faddr()
+    if report.type() == "email":
+        print "report " + report.faddr()
+    if report.type() == "http":
+        print "report " + str(report.port())
 
 for target in project_list.targets():
     print "target " + target.name()
@@ -239,15 +255,12 @@ authz_cfg=authz.Authz(
   forceBuild = True
 )
 
-c['slavePortnum'] = 9000
-c['status'] = [
-  WebStatus(8000, authz=authz_cfg)
-]
-
+c['protocols'] = {'pb': {'port': 9989}}
 
 # buildbot requires a flatened format for all its configuration
 # entries, with some strings that serve as links between the various
 # sections.  This builds up that format.
+c['status'] = []
 c['change_source'] = []
 c['slaves'] = []
 c['builders'] = []
@@ -317,14 +330,21 @@ for project in project_list.projects():
 
 # Installs email handlers
 for report in report_list.reports():
-    c['status'].append(
-        MailNotifier(
-            mode                  = ('failing',),
-            fromaddr              = report.faddr(),
-            sendToInterestedUsers = True,
-            relayhost             = report.relay(),
-            smtpPort              = 587,
-            smtpUser              = report.username(),
-            smtpPassword          = report.password(),
-        )
-    )
+    if report.type() == "email":
+        c['status'].append(
+            MailNotifier(
+                mode                  = ('failing',),
+                fromaddr              = report.faddr(),
+                sendToInterestedUsers = True,
+                relayhost             = report.relay(),
+                smtpPort              = 587,
+                smtpUser              = report.username(),
+                smtpPassword          = report.password(),
+                )
+            )
+
+    if report.type() == "http":
+        authz_cfg = authz.Authz(forceBuild = True)
+        c['status'].append(
+            WebStatus(report.port(), authz=authz_cfg)
+            )
