@@ -185,9 +185,23 @@ class ReportList:
     def reports(self):
         return self._reports
 
+class ForceList:
+    def __init__(self, filename):
+        self._forces = list()
+        
+        print "Loading force config " + filename
+        lines = open(filename).read()
+        projects = json.loads(lines)
+        for project in projects["projects"]:
+            self._forces.append(project)
+
+    def forces(self):
+        return self._forces
+
 slave_list = SlaveList("config/slaves/")
 project_list = ProjectList("config/projects/")
 report_list = ReportList("config/reports/")
+force_list = ForceList("config/force.json")
 
 for report in report_list.reports():
     print "report " + report.faddr()
@@ -206,11 +220,13 @@ from buildbot.buildslave import BuildSlave
 from buildbot.config import BuilderConfig
 from buildbot.process.factory import BuildFactory
 from buildbot.schedulers.basic import SingleBranchScheduler
+from buildbot.schedulers.forcesched import ForceScheduler
 from buildbot.changes.filter import ChangeFilter
 from buildbot.steps.source import Git
 from buildbot.steps.shell import ShellCommand
 from buildbot.schedulers.timed import Nightly
 from buildbot.status.mail import MailNotifier
+from buildbot.status.web import authz
 
 c = BuildmasterConfig = {}
 
@@ -218,10 +234,15 @@ c['title'] = "riscv-buildbot.dabbelt.com"
 c['titleURL'] = "http://riscv-buildbot.dabbelt.com"
 c['buildbotURL'] = "http://riscv-buildbot.dabbelt.com"
 
+authz_cfg=authz.Authz(
+  forceBuild = True
+)
+
 c['slavePortnum'] = 9000
 c['status'] = [
-  WebStatus(8000)
+  WebStatus(8000, authz=authz_cfg)
 ]
+
 
 # buildbot requires a flatened format for all its configuration
 # entries, with some strings that serve as links between the various
@@ -283,6 +304,15 @@ for project in project_list.projects():
             minute       = 52
         )
     )
+    if project.name() in force_list.forces():
+        c['schedulers'].append(
+            ForceScheduler(
+                name = ("force-" + project.name()).encode('ascii','ignore'),
+                builderNames = map(
+                    lambda n: n.encode('ascii','ignore'),
+                    project.all_target_names())
+            )
+        )
 
 # Installs email handlers
 for report in report_list.reports():
