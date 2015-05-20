@@ -155,11 +155,13 @@ class ProjectList:
 class Report:
     def __init__(self, config):
         self._type     = config["type"]
-        if self.type() == "email":
+        if self.type() == "smtp":
             self._faddr    = config["from"]
             self._username = config["username"]
             self._password = config["password"]
             self._relay    = config["relay"]
+        elif self.type() == "sendmail":
+            self._faddr    = config["from"]
         elif self.type() == "http":
             self._port     = config["port"]
         else:
@@ -330,7 +332,7 @@ for project in project_list.projects():
 
 # Installs email handlers
 for report in report_list.reports():
-    if report.type() == "email":
+    if report.type() == "smtp":
         c['status'].append(
             MailNotifier(
                 mode                  = ('failing',),
@@ -340,6 +342,15 @@ for report in report_list.reports():
                 smtpPort              = 587,
                 smtpUser              = report.username(),
                 smtpPassword          = report.password(),
+                )
+            )
+
+    if report.type() == "sendmail":
+        c['status'].append(
+            MailNotifier(
+                mode                  = ('failing',),
+                fromaddr              = report.faddr(),
+                sendToInterestedUsers = True,
                 )
             )
 
