@@ -242,7 +242,7 @@ from buildbot.process.factory import BuildFactory
 from buildbot.schedulers.basic import SingleBranchScheduler
 from buildbot.schedulers.forcesched import ForceScheduler
 from buildbot.changes.filter import ChangeFilter
-from buildbot.steps.source import Git
+from buildbot.steps.source.git import Git
 from buildbot.steps.shell import ShellCommand
 from buildbot.schedulers.timed import Nightly
 from buildbot.status.mail import MailNotifier
@@ -295,7 +295,8 @@ for project in project_list.projects():
         fact = BuildFactory()
         fact.addStep(Git(repourl = project.url(),
                          branch  = target.branch(),
-                         mode    = "clobber"
+                         mode    = "full",
+                         method  = "clobber"
                      )
                  )
         for step in target.steps():
