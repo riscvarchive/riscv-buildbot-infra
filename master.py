@@ -326,16 +326,20 @@ for project in project_list.projects():
 # Schedulers are a per-project entity, but need to contain the list of
 # every target that they build.  First we define the nightly target,
 # which doesn't actually depend on anything that does any polling.
+# The nightly target requires a branch so we actually have to make
+# multiple nighly schedulers per project since some projects may use
+# multiple branches.
 for project in project_list.projects():
-    c['schedulers'].append(
-        Nightly(
-            name         = "sched-nightly-" + project.name(),
-            branch       = "master",
-            builderNames = project.all_target_names(),
-            hour         = 00,
-            minute       = 52
+    for target in project.targets():
+        c['schedulers'].append(
+            Nightly(
+                name         = "sched-nightly-" + project.target_name(target),
+                branch       = target.branch(),
+                builderNames = [project.target_name(target)],
+                hour         = 00,
+                minute       = 52
+            )
         )
-    )
     if force_list.should_force(project.name()):
         c['schedulers'].append(
             ForceScheduler(
