@@ -24,8 +24,12 @@
                 }
             ],
             "steps": [
-                ["./configure","--prefix=$(PWD)/install", "--enable-linux", "--with-xlen=@xlen@", "--@multilib@-multilib", "--@atomic@-atomic", "--@float@-float"],
-                ["make", "-j4"]
+                {
+                    "command" :["./configure","--prefix=$(PWD)/install", "--enable-linux", "--with-xlen=@xlen@", "--@multilib@-multilib", "--@atomic@-atomic", "--@float@-float"]
+                },
+                {
+                    "command" : ["make", "-j4"]
+                }
             ]
         },
         {
@@ -45,8 +49,12 @@
                 }
             ],
             "steps": [
-                ["./configure","--prefix=$(PWD)/install", "--disable-linux", "--with-xlen=@xlen@", "--@atomic@-atomic", "--@float@-float"],
-                ["make", "-j4"]
+                {
+                    "command" : ["./configure","--prefix=$(PWD)/install", "--disable-linux", "--with-xlen=@xlen@", "--@atomic@-atomic", "--@float@-float"]
+                },
+                {
+                    "command" : ["make", "-j4"]
+                }
             ]
         }
     ]

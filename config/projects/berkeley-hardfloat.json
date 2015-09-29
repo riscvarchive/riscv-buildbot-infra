@@ -12,7 +12,7 @@
                 }
             ],
             "steps": [
-                ["make", "-j1", "autocheck-@backend@"]
+                { "command" : ["make", "-j1", "autocheck-@backend@"]}
             ]
         }
     ]
