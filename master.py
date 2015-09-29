@@ -78,9 +78,10 @@ class Target:
         return self._branch
 
     def steps(self):
-        return map(lambda step: map(lambda argv: self.replaceall(argv),
-                                    step),
-                   self._steps)
+        mapped_steps = self._steps
+        for step in mapped_steps :
+            step["command"] = map(lambda argv: self.replaceall(argv), step["command"])
+        return mapped_steps
 
     def find_matching_slaves(self, slave_list):
         return slave_list.slaves()
@@ -246,6 +247,7 @@ from buildbot.steps.shell import ShellCommand
 from buildbot.schedulers.timed import Nightly
 from buildbot.status.mail import MailNotifier
 from buildbot.status.web import authz
+from buildbot.status.results import SUCCESS, WARNINGS, FAILURE
 
 c = BuildmasterConfig = {}
 
@@ -279,6 +281,14 @@ for slave in slave_list.slaves():
         )
     )
 
+# This little dictionary is passed to the ShellCommand constructor to tell the
+# factory how it should handle different return codes
+rc_dict = {
+        0 : SUCCESS,
+        2 : WARNINGS,
+        1 : FAILURE
+        }
+
 # builders map directly to targets, but since targets don't have everything
 for project in project_list.projects():
     for target in project.targets():
@@ -289,7 +299,12 @@ for project in project_list.projects():
                      )
                  )
         for step in target.steps():
-            fact.addStep(ShellCommand(command=step,
+            fact.addStep(ShellCommand(command=step['command'],
+                                      name="{0}".format(step['name']) if 'name' in step else 'shell',
+                                      alwaysRun = True if 'alwaysRun' in step else False,
+                                      haltOnFailure = True,
+                                      flunkOnWarnings = True,
+                                      decodeRC = rc_dict,
                                       timeout=(10 * 60 * 60)
                                   )
                      )
