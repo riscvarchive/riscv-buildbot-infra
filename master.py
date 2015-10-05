@@ -303,7 +303,8 @@ for project in project_list.projects():
                                       name="{0}".format(step['name']) if 'name' in step else 'shell',
                                       alwaysRun = True if 'alwaysRun' in step else False,
                                       haltOnFailure = True,
-                                      flunkOnWarnings = True,
+                                      flunkOnWarnings = True if 'flunkOnWarnings' in step else False,
+                                      warnOnWarnings = True if 'warnOnWarnings' in step else False,
                                       decodeRC = rc_dict,
                                       timeout=(10 * 60 * 60)
                                   )
