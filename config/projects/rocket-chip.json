@@ -14,26 +14,26 @@
             "steps": [
                {
 	           "name": "submodules",
-                   "command": ["make", "-C", "regression", "CONFIG=@config@", "submodules"]
+                   "command": ["make", "submodules", "-C", "regression", "CONFIG=@config@"]
                },
                {
 	           "name": "tools",
-                   "command": ["make", "-C", "regression", "CONFIG=@config@", "tools"]
+                   "command": ["make", "tools", "-C", "regression", "CONFIG=@config@"]
                },
                {
 	           "name": "vsim",
-                   "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim"]
+                   "command": ["make", "vsim", "-C", "regression", "CONFIG=@config@"]
                },
                {
 	           "name": "vsim-asm-tests",
-                   "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim-asm-tests"]
+                   "command": ["make", "vsim-asm-tests", "-C", "regression", "CONFIG=@config@"]
                },
                {
 	           "name": "vsim-bmark-tests",
-                   "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim-bmark-tests"]
+                   "command": ["make", "vsim-bmark-tests", "-C", "regression", "CONFIG=@config@"]
                },
                {
-	           "name": "make",
+	           "name": "regression",
                    "command": ["make", "-C", "regression", "CONFIG=@config@"]
                }
            ]
