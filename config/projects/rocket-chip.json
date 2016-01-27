@@ -13,21 +13,27 @@
             ],
             "steps": [
                {
+	           "name": "submodules",
                    "command": ["make", "-C", "regression", "CONFIG=@config@", "submodules"]
                },
                {
+	           "name": "tools",
                    "command": ["make", "-C", "regression", "CONFIG=@config@", "tools"]
                },
                {
+	           "name": "vsim",
                    "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim"]
                },
                {
+	           "name": "vsim-asm-tests",
                    "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim-asm-tests"]
                },
                {
+	           "name": "vsim-bmark-tests",
                    "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim-bmark-tests"]
                },
                {
+	           "name": "make",
                    "command": ["make", "-C", "regression", "CONFIG=@config@"]
                }
            ]
