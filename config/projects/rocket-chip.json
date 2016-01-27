@@ -1,0 +1,42 @@
+{
+    "name": "rocket-chip",
+    "url": "git@github.com:ucb-bar/rocket-chip.git",
+
+    "configurations": [
+        {
+            "name": "rocket-chip @config@",
+            "parameters": [
+                {
+                    "pattern": "@config@",
+                    "values": ["DefaultCPPConfig", "ExampleSmallConfig"]
+                }
+            ],
+            "steps": [
+               {
+                   "command": ["make", "-C", "regression", "CONFIG=@config@", "submodules"],
+                   "warnOnWarnings": "False"
+               },
+               {
+                   "command": ["make", "-C", "regression", "CONFIG=@config@", "tools"],
+                   "warnOnWarnings": "False"
+               },
+               {
+                   "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim"],
+                   "warnOnWarnings": "False"
+               },
+               {
+                   "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim-asm-tests"],
+                   "warnOnWarnings": "False"
+               },
+               {
+                   "command": ["make", "-C", "regression", "CONFIG=@config@", "vsim-bmark-tests"],
+                   "warnOnWarnings": "False"
+               },
+               {
+                   "command": ["make", "-C", "regression", "CONFIG=@config@"],
+                   "warnOnWarnings": "False"
+               }
+           ]
+        }
+    ]
+}
