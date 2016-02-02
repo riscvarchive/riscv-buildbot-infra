@@ -1,2 +1,4 @@
 /config/slaves/*.json
 /config/reports/*.json
+
+*.swp
