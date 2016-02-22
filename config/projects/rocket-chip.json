@@ -4,11 +4,11 @@
 
     "configurations": [
         {
-            "name": "rocket-chip CONFIG=@config@ TORTURE_CONFIG=@torture_config@",
+            "name": "vsim CONFIG=@config@ TORTURE_CONFIG=@torture_config@",
             "parameters": [
                 {
                      "pattern": "@config@",
-                    "values": ["DefaultCPPConfig", "ExampleSmallConfig"]
+                     "values": ["DefaultCPPConfig", "ExampleSmallConfig"]
                 },
                 {
                       "pattern": "@torture_config@",
@@ -44,6 +44,45 @@
 	           "name": "vsim-torture",
                    "command": ["make", "vsim-torture", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"],
                    "warnOnFailures": "true"
+               }
+           ]
+        },
+        {
+            "name": "fsim CONFIG=@config@ TORTURE_CONFIG=@torture_config@",
+            "parameters": [
+                {
+                     "pattern": "@config@",
+                     "values": ["DefaultFPGAConfig"]
+                },
+                {
+                      "pattern": "@torture_config@",
+                      "values": ["default"]
+                }
+             ],
+            "steps": [
+               {
+	           "name": "submodules",
+                   "command": ["make", "submodules", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"]
+               },
+               {
+	           "name": "tools",
+                   "command": ["make", "tools", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"]
+               },
+               {
+	           "name": "fsim-debug",
+                   "command": ["make", "fsim-debug", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"]
+               },
+               {
+	           "name": "fsim-ndebug",
+                   "command": ["make", "fsim-ndebug", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"]
+               },
+               {
+	           "name": "fsim-asm-tests",
+                   "command": ["make", "fsim-asm-tests", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"]
+               },
+               {
+	           "name": "fsim-bmark-tests",
+                   "command": ["make", "fsim-bmark-tests", "-C", "regression", "CONFIG=@config@", "TORTURE_CONFIG=@torture_config@"]
                }
            ]
         }
