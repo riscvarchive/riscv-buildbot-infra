@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import copy
 
 # This class represents a single slave, which just stores some
 # configuration information about that slave.
@@ -78,9 +79,11 @@ class Target:
         return self._branch
 
     def steps(self):
-        mapped_steps = self._steps
-        for step in mapped_steps :
-            step["command"] = map(lambda argv: self.replaceall(argv), step["command"])
+        mapped_steps = []
+        for step in self._steps :
+            mapped_step = copy.deepcopy(step)
+            mapped_step["command"] = map(lambda argv: self.replaceall(argv), step["command"])
+            mapped_steps.append(mapped_step)
         return mapped_steps
 
     def find_matching_slaves(self, slave_list):
