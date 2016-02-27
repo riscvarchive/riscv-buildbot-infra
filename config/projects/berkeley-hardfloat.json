@@ -8,11 +8,11 @@
             "parameters": [
                 {
                     "pattern": "@backend@",
-                    "values": []
+                    "values": ["c"]
                 }
             ],
             "steps": [
-                { "command" : ["make", "-j1", "autocheck-@backend@"]}
+                { "command" : ["make", "-j4", "test-@backend@"]}
             ]
         }
     ]
